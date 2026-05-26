@@ -1666,6 +1666,27 @@
         "@remotion/bundler": "workspace:*",
       },
     },
+    "packages/template-athletes-eye": {
+      "name": "template-athletes-eye",
+      "version": "1.0.0",
+      "dependencies": {
+        "@remotion/cli": "workspace:*",
+        "@remotion/media-utils": "workspace:*",
+        "@remotion/zod-types": "workspace:*",
+        "react": "19.2.3",
+        "react-dom": "19.2.3",
+        "remotion": "workspace:*",
+        "zod": "4.3.6",
+      },
+      "devDependencies": {
+        "@remotion/eslint-config-flat": "workspace:*",
+        "@types/react": "19.2.7",
+        "@types/web": "0.0.166",
+        "eslint": "9.19.0",
+        "prettier": "3.8.1",
+        "typescript": "5.9.3",
+      },
+    },
     "packages/template-audiogram": {
       "name": "template-audiogram",
       "version": "1.0.0",
@@ -7756,6 +7777,8 @@
     "teeny-request": ["teeny-request@9.0.0", "", { "dependencies": { "http-proxy-agent": "5.0.0", "https-proxy-agent": "5.0.1", "node-fetch": "2.6.9", "stream-events": "1.0.5", "uuid": "9.0.1" } }, "sha512-resvxdc6Mgb7YEThw6G6bExlXKkv6+YbuzGg9xuXxSgxJF7Ozs+o8Y9+2R3sArdWdW8nOokoQb1yrpFB0pQK2g=="],
 
     "template-ai-video": ["template-ai-video@workspace:packages/template-prompt-to-video"],
+
+    "template-athletes-eye": ["template-athletes-eye@workspace:packages/template-athletes-eye"],
 
     "template-audiogram": ["template-audiogram@workspace:packages/template-audiogram"],
 
