@@ -27,9 +27,9 @@ videoSrc: staticFile("activity.mp4"),
 gpxSrc: staticFile("activity.gpx"),
 ```
 
-The bundled demo video is capped to 30 seconds so the Studio timeline stays
-responsive. Your own video uses its full media duration by default. To cap a
-long activity video, add `durationInSeconds` to the default props.
+The template uses a placeholder background until you add `videoSrc`. Remove
+`durationInSeconds` to use the full duration of your video, or keep it to cap a
+long activity video.
 
 The GPX file should contain a track with latitude, longitude, elevation and time values.
 
