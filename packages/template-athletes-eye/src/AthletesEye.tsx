@@ -21,6 +21,7 @@ export const athletesEyeSchema = z.object({
   videoSrc: z.string(),
   gpxSrc: z.string(),
   accentColor: z.string(),
+  durationInSeconds: z.number().positive().optional(),
 });
 
 export type AthletesEyeProps = z.infer<typeof athletesEyeSchema>;
