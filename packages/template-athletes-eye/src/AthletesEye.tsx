@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { Video } from "@remotion/media";
 import {
   AbsoluteFill,
   continueRender,
   delayRender,
   interpolate,
-  OffthreadVideo,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
@@ -18,7 +18,7 @@ import {
 } from "./route-utils";
 
 export const athletesEyeSchema = z.object({
-  videoSrc: z.string().nullable(),
+  videoSrc: z.string(),
   gpxSrc: z.string(),
   accentColor: z.string(),
   durationInSeconds: z.number().positive().optional(),
@@ -94,31 +94,6 @@ const Stat: React.FC<{
   );
 };
 
-const VideoPlaceholder: React.FC = () => {
-  return (
-    <AbsoluteFill
-      style={{
-        background:
-          "radial-gradient(circle at 30% 20%, rgba(32, 227, 178, 0.35), transparent 28%), linear-gradient(145deg, #162033, #080b12)",
-      }}
-    >
-      <AbsoluteFill
-        style={{
-          alignItems: "center",
-          color: "rgba(255, 255, 255, 0.45)",
-          fontSize: 46,
-          fontWeight: 700,
-          justifyContent: "center",
-          letterSpacing: "-0.03em",
-          textAlign: "center",
-        }}
-      >
-        Add your activity video
-      </AbsoluteFill>
-    </AbsoluteFill>
-  );
-};
-
 export const AthletesEye: React.FC<AthletesEyeProps> = ({
   videoSrc,
   gpxSrc,
@@ -158,20 +133,16 @@ export const AthletesEye: React.FC<AthletesEyeProps> = ({
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#0c1018", fontFamily: "Arial" }}>
-      {videoSrc ? (
-        <OffthreadVideo
-          muted
-          src={videoSrc}
-          style={{
-            height: "100%",
-            objectFit: "cover",
-            opacity: 0.78,
-            width: "100%",
-          }}
-        />
-      ) : (
-        <VideoPlaceholder />
-      )}
+      <Video
+        muted
+        objectFit="cover"
+        src={videoSrc}
+        style={{
+          height: "100%",
+          opacity: 0.78,
+          width: "100%",
+        }}
+      />
       <AbsoluteFill
         style={{
           background:

@@ -27,9 +27,10 @@ videoSrc: staticFile("activity.mp4"),
 gpxSrc: staticFile("activity.gpx"),
 ```
 
-The template uses a placeholder background until you add `videoSrc`. Remove
-`durationInSeconds` to use the full duration of your video, or keep it to cap a
-long activity video.
+The template uses `http://remotion.media/gopro-small.mp4` as the default video.
+If Remotion Studio finds a video file in `public/`, it uses that local video
+instead. Add `durationInSeconds` to the default props if you want to cap a long
+activity video.
 
 The GPX file should contain a track with latitude, longitude, elevation and time values.
 
