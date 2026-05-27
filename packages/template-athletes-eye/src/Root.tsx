@@ -55,7 +55,7 @@ export const RemotionRoot: React.FC = () => {
       }}
       component={AthletesEye}
       defaultProps={{
-        accentColor: "#20e3b2",
+        accentColor: "#0D96FF",
         gpxSrc: staticFile("sample.gpx"),
         videoSrc: defaultVideoSrc,
       }}

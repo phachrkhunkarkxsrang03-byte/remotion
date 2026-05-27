@@ -57,6 +57,7 @@ export const RouteMap: React.FC<{
   const currentPoint =
     projectedCompletedRoute[projectedCompletedRoute.length - 1] ??
     projectedRoute[0];
+  const endPoint = projectedRoute[projectedRoute.length - 1];
 
   return (
     <svg
@@ -73,10 +74,10 @@ export const RouteMap: React.FC<{
       <polyline
         fill="none"
         points={toPolylinePoints(projectedRoute)}
-        stroke="rgba(255, 255, 255, 0.25)"
+        stroke="#004DE8"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={44}
+        strokeWidth={54}
       />
       <polyline
         fill="none"
@@ -84,8 +85,18 @@ export const RouteMap: React.FC<{
         stroke={accentColor}
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={44}
+        strokeWidth={34}
       />
+      {endPoint ? (
+        <circle
+          cx={endPoint.x}
+          cy={endPoint.y}
+          fill="#0c1018"
+          r={32}
+          stroke="white"
+          strokeWidth={18}
+        />
+      ) : null}
       {currentPoint ? (
         <circle
           cx={currentPoint.x}

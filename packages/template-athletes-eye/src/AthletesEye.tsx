@@ -12,7 +12,6 @@ import { z } from "zod";
 import { RouteMap } from "./RouteMap";
 import {
   getRouteProgress,
-  getRouteStats,
   parseGpx,
   type RoutePoint,
 } from "./route-utils";
@@ -63,12 +62,12 @@ const useGpxRoute = (gpxSrc: string) => {
 const statStyle: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
-  gap: 8,
+  gap: 4,
 };
 
 const labelStyle: React.CSSProperties = {
-  color: "rgba(255, 255, 255, 0.65)",
-  fontSize: 28,
+  color: "rgba(255, 255, 255, 0.72)",
+  fontSize: 24,
   fontWeight: 600,
   letterSpacing: "0.08em",
   textTransform: "uppercase",
@@ -76,10 +75,10 @@ const labelStyle: React.CSSProperties = {
 
 const valueStyle: React.CSSProperties = {
   color: "white",
-  fontSize: 72,
+  fontSize: 44,
   fontVariantNumeric: "tabular-nums",
   fontWeight: 800,
-  letterSpacing: "-0.04em",
+  letterSpacing: "-0.03em",
 };
 
 const Stat: React.FC<{
@@ -112,15 +111,11 @@ export const AthletesEye: React.FC<AthletesEyeProps> = ({
     },
   );
 
-  const routeStats = useMemo(() => {
-    return route ? getRouteStats(route) : null;
-  }, [route]);
-
   const routeProgress = useMemo(() => {
     return route ? getRouteProgress(route, progress) : null;
   }, [progress, route]);
 
-  if (!route || !routeStats || !routeProgress) {
+  if (!route || !routeProgress) {
     return null;
   }
 
@@ -130,68 +125,138 @@ export const AthletesEye: React.FC<AthletesEyeProps> = ({
     routeProgress.currentPoint.elevation === null
       ? "--"
       : Math.round(routeProgress.currentPoint.elevation);
+  const currentTime =
+    routeProgress.currentPoint.time === null
+      ? "--"
+      : new Intl.DateTimeFormat("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+        }).format(new Date(routeProgress.currentPoint.time));
+  const opacity = interpolate(
+    frame,
+    [0, 30, Math.max(31, durationInFrames - 30), durationInFrames],
+    [0, 1, 1, 0],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    },
+  );
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0c1018", fontFamily: "Arial" }}>
-      <Video
-        muted
-        objectFit="cover"
-        src={videoSrc}
+    <AbsoluteFill
+      style={{
+        backgroundColor: "#0c1018",
+        fontFamily: "Arial",
+        opacity,
+      }}
+    >
+      <AbsoluteFill
         style={{
-          height: "100%",
-          opacity: 0.78,
+          height: "60%",
+          overflow: "hidden",
           width: "100%",
         }}
-      />
+      >
+        <Video
+          muted
+          objectFit="cover"
+          src={videoSrc}
+          style={{
+            height: "100%",
+            width: "100%",
+          }}
+        />
+      </AbsoluteFill>
+      <AbsoluteFill
+        style={{
+          background: "#10151f",
+          height: "40%",
+          overflow: "hidden",
+          top: "60%",
+        }}
+      >
+        <AbsoluteFill
+          style={{
+            background:
+              "radial-gradient(circle at 35% 25%, rgba(13, 150, 255, 0.28), transparent 28%), linear-gradient(180deg, #1d2533, #090c12)",
+          }}
+        />
+        <AbsoluteFill
+          style={{
+            opacity: 0.18,
+          }}
+        >
+          <div
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.28) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.28) 1px, transparent 1px)",
+              backgroundSize: "80px 80px",
+              height: "100%",
+              transform: "rotate(-10deg) scale(1.3)",
+              width: "100%",
+            }}
+          />
+        </AbsoluteFill>
+        <AbsoluteFill
+          style={{
+            padding: "150px 80px 40px",
+          }}
+        >
+          <RouteMap
+            accentColor={accentColor}
+            completedRoute={routeProgress.completedRoute}
+            route={route}
+          />
+        </AbsoluteFill>
+      </AbsoluteFill>
       <AbsoluteFill
         style={{
           background:
-            "linear-gradient(180deg, rgba(12,16,24,0) 25%, rgba(12,16,24,0.92) 100%)",
+            "linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0) 38%)",
+          top: "60%",
         }}
       />
-      <AbsoluteFill
-        style={{
-          justifyContent: "flex-end",
-          padding: 72,
-        }}
-      >
+      <AbsoluteFill style={{ top: "60%" }}>
         <div
           style={{
-            backgroundColor: "rgba(12, 16, 24, 0.78)",
-            border: "1px solid rgba(255, 255, 255, 0.14)",
-            borderRadius: 44,
-            boxShadow: "0 24px 80px rgba(0, 0, 0, 0.35)",
+            alignItems: "flex-start",
+            color: "white",
             display: "flex",
-            flexDirection: "column",
-            gap: 44,
-            overflow: "hidden",
-            padding: 44,
+            flexDirection: "row",
+            fontVariantNumeric: "tabular-nums",
+            padding: 50,
+            width: "100%",
           }}
         >
-          <div style={{ height: 420 }}>
-            <RouteMap
-              accentColor={accentColor}
-              completedRoute={routeProgress.completedRoute}
-              route={route}
-            />
+          <div
+            style={{
+              fontSize: 100,
+              fontWeight: 800,
+              letterSpacing: "-0.06em",
+              lineHeight: 1,
+            }}
+          >
+            {speed}km/h
           </div>
           <div
             style={{
-              display: "grid",
-              gap: 28,
-              gridTemplateColumns: "1fr 1fr",
+              flex: 1,
+            }}
+          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 18,
+              textAlign: "right",
             }}
           >
+            <Stat label="Time" value={currentTime} />
             <Stat
               label="Distance"
-              value={`${routeProgress.distanceInKm.toFixed(1)} km`}
+              value={`${routeProgress.distanceInKm.toFixed(2)}km`}
             />
-            <Stat label="Speed" value={`${speed} km/h`} />
             <Stat label="Elevation" value={`${elevation} m`} />
-            <Stat
-              label="Route"
-              value={`${routeStats.distanceInKm.toFixed(1)} km`}
-            />
           </div>
         </div>
       </AbsoluteFill>
