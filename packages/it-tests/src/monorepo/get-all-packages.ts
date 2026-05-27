@@ -6,13 +6,10 @@ import {CreateVideoInternals} from 'create-video';
 
 export const getAllPackages = () => {
 	const pkgDir = path.join(__dirname, '..', '..', '..');
-	const monorepoOnlyTemplates = ['template-athletes-eye'];
 
 	const localTemplates = CreateVideoInternals.FEATURED_TEMPLATES.map(
 		(t) => t.templateInMonorepo,
-	)
-		.concat(monorepoOnlyTemplates)
-		.filter(Boolean) as string[];
+	).filter(Boolean) as string[];
 
 	const folders = readdirSync(pkgDir)
 		.filter((pkg) => lstatSync(path.join(pkgDir, pkg)).isDirectory())

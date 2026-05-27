@@ -39,3 +39,9 @@ The GPX file should contain a track with latitude, longitude, elevation and time
 ```console
 npx remotion render AthletesEye out/video.mp4
 ```
+
+## Upgrade Remotion
+
+```console
+npx remotion upgrade
+```
