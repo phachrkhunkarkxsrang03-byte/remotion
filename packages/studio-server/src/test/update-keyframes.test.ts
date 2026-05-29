@@ -19,6 +19,17 @@ export const Example: React.FC = () => {
 };
 `;
 
+const colorInput = `import React from 'react';
+import {Solid, interpolateColors, useCurrentFrame} from 'remotion';
+
+export const Example: React.FC = () => {
+\tconst frame = useCurrentFrame();
+\treturn (
+\t\t<Solid color={interpolateColors(frame, [0, 100], ['red', 'blue'])} width={100} height={100} />
+\t);
+};
+`;
+
 const effectInput = `import {tint} from '@remotion/effects/tint';
 import {HtmlInCanvas} from '@remotion/html-in-canvas';
 import {interpolate, useCurrentFrame} from 'remotion';
@@ -86,7 +97,68 @@ test('updateSequenceKeyframes converts a static value to an interpolation', asyn
 	expect(output).toContain('opacity: interpolate(frame, [0, 25], [0.5, 0.75])');
 });
 
-test('updateSequenceKeyframes collapses to a static value when one keyframe remains', async () => {
+test('updateSequenceKeyframes converts a static value to a single-keyframe interpolation at frame 0', async () => {
+	const {output, oldValueStrings} = await updateSequenceKeyframes({
+		input: sequenceInput,
+		nodePath: lineColumnToNodePath(
+			sequenceInput,
+			getLine(sequenceInput, 'opacity'),
+		),
+		updates: [
+			{
+				key: 'style.opacity',
+				operation: {type: 'add', frame: 0, value: 0.75},
+			},
+		],
+	});
+
+	expect(oldValueStrings).toEqual(['0.5']);
+	expect(output).toContain('opacity: interpolate(frame, [0], [0.75])');
+});
+
+test('updateSequenceKeyframes adds a keyframe to an existing color interpolation', async () => {
+	const {output, oldValueStrings} = await updateSequenceKeyframes({
+		input: colorInput,
+		nodePath: lineColumnToNodePath(colorInput, getLine(colorInput, '<Solid')),
+		updates: [
+			{
+				key: 'color',
+				operation: {type: 'add', frame: 50, value: '#00ff00'},
+			},
+		],
+	});
+
+	expect(oldValueStrings).toEqual([
+		"interpolateColors(frame, [0, 100], ['red', 'blue'])",
+	]);
+	expect(output).toContain(
+		"color={interpolateColors(frame, [0, 50, 100], ['red', '#00ff00', 'blue'])}",
+	);
+});
+
+test('updateSequenceKeyframes converts a static string value to a color interpolation', async () => {
+	const input = colorInput.replace(
+		"interpolateColors(frame, [0, 100], ['red', 'blue'])",
+		"'red'",
+	);
+	const {output, oldValueStrings} = await updateSequenceKeyframes({
+		input,
+		nodePath: lineColumnToNodePath(input, getLine(input, '<Solid')),
+		updates: [
+			{
+				key: 'color',
+				operation: {type: 'add', frame: 50, value: 'blue'},
+			},
+		],
+	});
+
+	expect(oldValueStrings).toEqual(["'red'"]);
+	expect(output).toContain(
+		"color={interpolateColors(frame, [0, 50], ['red', 'blue'])}",
+	);
+});
+
+test('updateSequenceKeyframes keeps an interpolation when one keyframe remains', async () => {
 	const {output, oldValueStrings} = await updateSequenceKeyframes({
 		input: sequenceInput,
 		nodePath: lineColumnToNodePath(
@@ -102,8 +174,25 @@ test('updateSequenceKeyframes collapses to a static value when one keyframe rema
 	});
 
 	expect(oldValueStrings).toEqual(['interpolate(frame, [0, 100], [2, 4])']);
-	expect(output).toContain('style={{scale: 4}}');
-	expect(output).not.toContain('scale: interpolate');
+	expect(output).toContain('style={{scale: interpolate(frame, [100], [4])}}');
+});
+
+test('updateSequenceKeyframes keeps a color interpolation when one keyframe remains', async () => {
+	const {output, oldValueStrings} = await updateSequenceKeyframes({
+		input: colorInput,
+		nodePath: lineColumnToNodePath(colorInput, getLine(colorInput, '<Solid')),
+		updates: [
+			{
+				key: 'color',
+				operation: {type: 'remove', frame: 0},
+			},
+		],
+	});
+
+	expect(oldValueStrings).toEqual([
+		"interpolateColors(frame, [0, 100], ['red', 'blue'])",
+	]);
+	expect(output).toContain("color={interpolateColors(frame, [100], ['blue'])}");
 });
 
 test('updateEffectKeyframes removes a keyframe from an effect prop interpolation', () => {
@@ -131,7 +220,7 @@ test('updateEffectKeyframes removes a keyframe from an effect prop interpolation
 	);
 });
 
-test('updateEffectKeyframes collapses an effect prop to a static value', () => {
+test('updateEffectKeyframes keeps an effect prop interpolation with one keyframe', () => {
 	const input = effectInput.replace(
 		'interpolate(frame, [0, 50, 100], [0.2, 0.5, 0.8])',
 		'interpolate(frame, [0, 100], [0.2, 0.8])',
@@ -151,6 +240,5 @@ test('updateEffectKeyframes collapses an effect prop to a static value', () => {
 		],
 	});
 
-	expect(serialized).toContain('amount: 0.2');
-	expect(serialized).not.toContain('amount: interpolate');
+	expect(serialized).toContain('amount: interpolate(frame, [0], [0.2])');
 });

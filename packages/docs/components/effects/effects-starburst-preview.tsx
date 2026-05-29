@@ -12,9 +12,8 @@ export const EffectsStarburstPreview: React.FC<{
 	readonly rays: number;
 	readonly rotation: number;
 	readonly smoothness: number;
-	readonly originOffsetX: number;
-	readonly originOffsetY: number;
-}> = ({rays, rotation, smoothness, originOffsetX, originOffsetY}) => {
+	readonly origin: readonly [number, number];
+}> = ({rays, rotation, smoothness, origin}) => {
 	return (
 		<CanvasImage
 			src={EFFECTS_PREVIEW_IMAGE_SRC}
@@ -25,11 +24,10 @@ export const EffectsStarburstPreview: React.FC<{
 			effects={[
 				starburst({
 					rays,
-					colors: ['#ffdd00', '#ff8800'],
+					colors: ['#dff4ff', '#7cc6ff'],
 					rotation,
 					smoothness,
-					originOffsetX,
-					originOffsetY,
+					origin,
 				}),
 			]}
 		/>

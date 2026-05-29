@@ -45,6 +45,7 @@ const makeSequence = ({
 	nonce: [[0, nonce]],
 	loopDisplay: undefined,
 	getStack,
+	refForOutline: null,
 	premountDisplay: null,
 	postmountDisplay: null,
 	controls: overrideId ? makeControls(overrideId) : null,
@@ -113,11 +114,13 @@ test('keyframe display offsets follow the parent sequence context', () => {
 		getTimelineKeyframes(
 			{
 				canUpdate: false,
-				reason: 'computed',
+				reason: 'keyframed',
 				keyframes: [
 					{frame: 0, value: 2},
 					{frame: 60, value: 4},
 				],
+				easing: ['linear'],
+				clamping: {left: 'extend', right: 'extend'},
 			},
 			getOffset('child'),
 		),

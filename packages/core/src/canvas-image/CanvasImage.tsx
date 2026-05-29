@@ -16,7 +16,6 @@ import {
 	useMemoizedEffects,
 } from '../effects/use-memoized-effects.js';
 import {addSequenceStackTraces} from '../enable-sequence-stack-traces.js';
-import {truncateSrcForLabel} from '../Img.js';
 import {usePreload} from '../prefetch.js';
 import {
 	hiddenField,
@@ -25,12 +24,13 @@ import {
 } from '../sequence-field-schema.js';
 import {Sequence} from '../Sequence.js';
 import {SequenceContext} from '../SequenceContext.js';
+import {truncateSrcForLabel} from '../truncate-src-for-label.js';
 import {useBufferState} from '../use-buffer-state.js';
 import {useDelayRender} from '../use-delay-render.js';
 import {wrapInSchema} from '../wrap-in-schema.js';
-import type {CanvasImageProps} from './props.js';
+import type {CanvasImageCanvasProps, CanvasImageProps} from './props.js';
 
-const canvasImageSchema = {
+export const canvasImageSchema = {
 	fit: {
 		type: 'enum',
 		default: 'fill',
@@ -158,7 +158,7 @@ type CanvasImageContentProps = Pick<
 > & {
 	readonly effects: EffectsProp;
 	readonly controls: SequenceControls | undefined;
-};
+} & CanvasImageCanvasProps;
 
 const CanvasImageContent = forwardRef<
 	HTMLCanvasElement,
@@ -180,6 +180,7 @@ const CanvasImageContent = forwardRef<
 			maxRetries = 2,
 			delayRenderRetries,
 			delayRenderTimeoutInMilliseconds,
+			...canvasProps
 		},
 		ref,
 	) => {
@@ -363,6 +364,7 @@ const CanvasImageContent = forwardRef<
 
 		return (
 			<canvas
+				{...canvasProps}
 				ref={canvasRef}
 				width={width}
 				height={height}
@@ -404,6 +406,8 @@ const CanvasImageInner = forwardRef<
 			showInTimeline,
 			stack,
 			_experimentalControls: controls,
+			_remotionInternalDocumentationLink,
+			...canvasProps
 		},
 		ref,
 	) => {
@@ -421,6 +425,10 @@ const CanvasImageInner = forwardRef<
 				hidden={hidden}
 				showInTimeline={showInTimeline ?? true}
 				name={name ?? '<CanvasImage>'}
+				_remotionInternalDocumentationLink={
+					_remotionInternalDocumentationLink ??
+					'https://www.remotion.dev/docs/canvasimage'
+				}
 				_experimentalControls={controls}
 				_remotionInternalEffects={memoizedEffectDefinitions}
 				_remotionInternalIsMedia={{type: 'image', src}}
@@ -442,6 +450,7 @@ const CanvasImageInner = forwardRef<
 					maxRetries={maxRetries}
 					delayRenderRetries={delayRenderRetries}
 					delayRenderTimeoutInMilliseconds={delayRenderTimeoutInMilliseconds}
+					{...canvasProps}
 				/>
 			</Sequence>
 		);

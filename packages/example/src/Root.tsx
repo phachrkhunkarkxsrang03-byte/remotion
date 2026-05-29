@@ -56,19 +56,6 @@ import {
 	CrosswarpTransitionDocThumb,
 	DissolveTransitionDoc,
 	DissolveTransitionDocThumb,
-	EffectsBlurPreview,
-	EffectsBrightnessPreview,
-	EffectsContrastPreview,
-	EffectsDuotonePreview,
-	EffectsGrayscalePreview,
-	EffectsHalftonePreview,
-	EffectsHuePreview,
-	EffectsInvertPreview,
-	EffectsSaturationPreview,
-	EffectsTintPreview,
-	EffectsUvTranslatePreview,
-	EffectsWavePreview,
-	EffectsXyTranslatePreview,
 	FilmBurnTransitionDoc,
 	FilmBurnTransitionDocThumb,
 	HtmlInCanvasComplexText,
@@ -192,6 +179,7 @@ import {Issue7568} from './AudioTesting/Issue7568';
 import {BrowserTest} from './BrowserTest';
 import {EdgeBlur} from './EdgeBlur/EdgeBlur';
 import {EffectsTestbed} from './EffectsTestbed/EffectsTestbed';
+import {HalftoneGradient} from './EffectsTestbed/HalftoneGradient';
 import {VideoEffectsFastRefresh} from './EffectsTestbed/VideoEffectsFastRefresh';
 import {Empty} from './Empty';
 import {JumpCuts, SAMPLE_SECTIONS, calculateMetadataJumpCuts} from './JumpCuts';
@@ -219,6 +207,7 @@ import {PremountOnTransitionSeries} from './PremountOnTransitionSeries';
 import {PrintProps} from './PrintProps';
 import {SfxExample} from './Sfx';
 import {CanvasImg} from './SimpleImg/CanvasImg';
+import {ImgEffects} from './SimpleImg/ImgEffects';
 import {SmoothTextTransition} from './SmoothTextTransition';
 import {SpringSeason} from './SpringSeason';
 import {StarburstExample} from './Starburst';
@@ -555,6 +544,14 @@ export const Index: React.FC = () => {
 				<Composition
 					id="canvas-img"
 					component={CanvasImg}
+					width={1080}
+					height={1080}
+					fps={30}
+					durationInFrames={10}
+				/>
+				<Composition
+					id="img-effects"
+					component={ImgEffects}
 					width={1080}
 					height={1080}
 					fps={30}
@@ -1099,118 +1096,6 @@ export const Index: React.FC = () => {
 						height={280}
 						width={540}
 						durationInFrames={60}
-					/>
-					<Composition
-						id="html-in-canvas-effects-brightness-preview"
-						component={EffectsBrightnessPreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-contrast-preview"
-						component={EffectsContrastPreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-duotone-preview"
-						component={EffectsDuotonePreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-blur-preview"
-						component={EffectsBlurPreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-grayscale-preview"
-						component={EffectsGrayscalePreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-halftone-preview"
-						component={EffectsHalftonePreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={2}
-					/>
-					<Composition
-						id="html-in-canvas-effects-hue-preview"
-						component={EffectsHuePreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-invert-preview"
-						component={EffectsInvertPreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-saturation-preview"
-						component={EffectsSaturationPreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-tint-preview"
-						component={EffectsTintPreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-wave-preview"
-						component={EffectsWavePreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-scale-preview"
-						component={EffectsWavePreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-xy-translate-preview"
-						component={EffectsXyTranslatePreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
-					/>
-					<Composition
-						id="html-in-canvas-effects-uv-translate-preview"
-						component={EffectsUvTranslatePreview}
-						fps={30}
-						height={720}
-						width={1080}
-						durationInFrames={1}
 					/>
 					<Composition
 						id="zoom-in-out-transition-doc"
@@ -1979,6 +1864,14 @@ export const Index: React.FC = () => {
 				<Composition
 					id="effects-testbed"
 					component={EffectsTestbed}
+					width={1920}
+					height={1920}
+					fps={30}
+					durationInFrames={300}
+				/>
+				<Composition
+					id="halftone-gradient"
+					component={HalftoneGradient}
 					width={1920}
 					height={1920}
 					fps={30}

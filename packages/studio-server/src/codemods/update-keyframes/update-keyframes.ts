@@ -101,17 +101,18 @@ const getNumericValue = (node: Expression): number | null => {
 	return null;
 };
 
-const getInterpolateExpression = (
+const getInterpolationExpression = (
 	node: Expression,
 ): InterpolateExpression | null => {
 	if (node.type === 'TSAsExpression') {
-		return getInterpolateExpression(node.expression as Expression);
+		return getInterpolationExpression(node.expression as Expression);
 	}
 
 	if (
 		node.type !== 'CallExpression' ||
 		node.callee.type !== 'Identifier' ||
-		node.callee.name !== 'interpolate'
+		(node.callee.name !== 'interpolate' &&
+			node.callee.name !== 'interpolateColors')
 	) {
 		return null;
 	}
@@ -177,6 +178,20 @@ const getInterpolateExpression = (
 	};
 };
 
+const getInterpolationCalleeForValues = ({
+	staticValue,
+	newValue,
+}: {
+	staticValue: unknown;
+	newValue: unknown;
+}): ExpressionKind => {
+	return b.identifier(
+		typeof staticValue === 'string' && typeof newValue === 'string'
+			? 'interpolateColors'
+			: 'interpolate',
+	);
+};
+
 const createFrameExpression = (frame: number): ExpressionKind => {
 	return parseValueExpression(frame);
 };
@@ -214,7 +229,7 @@ const addKeyframe = ({
 	frame: number;
 	value: unknown;
 }): ExpressionKind => {
-	const existing = getInterpolateExpression(expression);
+	const existing = getInterpolationExpression(expression);
 	const newOutput = parseValueExpression(value);
 
 	if (existing) {
@@ -242,22 +257,24 @@ const addKeyframe = ({
 		throw new Error('Cannot add keyframe to computed expression');
 	}
 
-	if (frame === 0) {
-		throw new Error(
-			'Cannot add keyframe to static expression at frame 0 because interpolate requires two distinct frames',
-		);
-	}
-
 	const staticValue = extractStaticValue(expression);
 	const staticOutput = parseValueExpression(staticValue);
+	const keyframes: InterpolateKeyframe[] =
+		frame === 0
+			? [{frame, output: newOutput, value}]
+			: [
+					{frame: 0, output: staticOutput, value: staticValue},
+					{frame, output: newOutput, value},
+				];
+
 	return createInterpolateExpression({
-		callee: b.identifier('interpolate'),
+		callee: getInterpolationCalleeForValues({
+			staticValue,
+			newValue: value,
+		}),
 		input: b.identifier('frame'),
 		extraArgs: [],
-		keyframes: [
-			{frame: 0, output: staticOutput, value: staticValue},
-			{frame, output: newOutput, value},
-		],
+		keyframes,
 	});
 };
 
@@ -268,7 +285,7 @@ const removeKeyframe = ({
 	expression: Expression;
 	frame: number;
 }): ExpressionKind => {
-	const existing = getInterpolateExpression(expression);
+	const existing = getInterpolationExpression(expression);
 	if (!existing) {
 		throw new Error('Cannot remove keyframe from non-interpolated expression');
 	}
@@ -283,9 +300,6 @@ const removeKeyframe = ({
 	const nextKeyframes = existing.keyframes.filter(
 		(_keyframe, index) => index !== keyframeIndex,
 	);
-	if (nextKeyframes.length === 1) {
-		return parseValueExpression(nextKeyframes[0].value);
-	}
 
 	return createInterpolateExpression({
 		callee: existing.callee,
